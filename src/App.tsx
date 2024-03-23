@@ -1,12 +1,18 @@
-import List from './components/List/List'
+import TodoList from './components/TodoList/TodoList';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function App() {
+  const theme = createTheme({
+    typography: {
+      fontFamily: ['Encode Sans Expanded', 'sans-serif'].join(','),
+    },
+  });
 
   return (
-    <>
-        <List />
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <TodoList />
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;

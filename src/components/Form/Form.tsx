@@ -1,27 +1,43 @@
-import React from "react";
+import React from 'react';
+import { TextField, Button, Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
 
 interface FormProps {
-    addItem: (name: string) => void
+  addTodo: (todoName: string) => void;
 }
 
-const Form: React.FC<FormProps> = ({addItem}) => {
-    const [item, setItem] = React.useState('');
+const Form: React.FC<FormProps> = ({ addTodo }) => {
+  const [inputValue, setInputValue] = React.useState('');
 
-    return (
-        <div>
-            <h1>Add Todo</h1>
-            <input
-                placeholder="Do something useful..."
-                value={item}
-                onChange={e => setItem(e.target.value)}
-                type="text"
-            />
-            <button onClick={() => {
-                addItem(item);
-                setItem('');
-            }}>Add</button>
-        </div>
-    )
-}
+  return (
+    <div>
+      <Stack direction="column" spacing={3}>
+        <Typography variant="h3">Todo List</Typography>
+        <Stack direction="row" spacing={2}>
+          <TextField
+            size="small"
+            id={'todo-input'}
+            label="Todo"
+            variant={'outlined'}
+            placeholder="Do something useful..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            type="text"
+          />
+          <Button
+            onClick={() => {
+              addTodo(inputValue);
+              setInputValue('');
+            }}
+            variant="contained"
+            size="large"
+          >
+            Add
+          </Button>
+        </Stack>
+      </Stack>
+    </div>
+  );
+};
 
-export default Form
+export default Form;
