@@ -11,7 +11,7 @@ interface ListItem {
   done: boolean;
 }
 
-export default function TodoList() {
+const TodoList = () => {
   const [todoList, setList] = useState<ListItem[]>([]);
 
   useEffect(() => {
@@ -71,4 +71,6 @@ export default function TodoList() {
       </List>
     </div>
   );
-}
+};
+
+export default TodoList;
