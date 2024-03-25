@@ -9,8 +9,7 @@ interface TodoProps {
   name: string;
   done: boolean;
   deleteCallback: (uuid: string) => void;
-  editCallback: (uuid: string, name: string) => void;
-  doneCallback: (uuid: string) => void;
+  updateCallback: (uuid: string, key: string, value?: string | boolean) => void;
 }
 
 enum inputStatus {
@@ -18,19 +17,25 @@ enum inputStatus {
   VIEW,
 }
 
-const Todo: React.FC<TodoProps> = ({ uuid, done, name, deleteCallback, editCallback, doneCallback }) => {
+const Todo: React.FC<TodoProps> = ({ uuid, done, name, deleteCallback, updateCallback }) => {
   const [status, setStatus] = React.useState<inputStatus>(inputStatus.VIEW);
   const [inputValue, setInputValue] = React.useState<string>(name);
 
   const handleNameSave = () => {
-    editCallback(uuid, inputValue);
+    updateCallback(uuid, 'name', inputValue);
     setStatus(inputStatus.VIEW);
   };
 
   return (
-    <ListItem style={{border: "1px solid black", marginBottom: "10px"}} key={uuid}>
+    <ListItem style={{ border: '1px solid black', marginBottom: '10px' }} key={uuid}>
       <ListItemIcon>
-        <Checkbox edge="start" checked={done} tabIndex={-1} disableRipple onClick={() => doneCallback(uuid)} />
+        <Checkbox
+          edge="start"
+          checked={done}
+          tabIndex={-1}
+          disableRipple
+          onChange={(e) => updateCallback(uuid, 'done', e.target.checked)}
+        />
       </ListItemIcon>
       {status === inputStatus.EDIT ? (
         <TextField

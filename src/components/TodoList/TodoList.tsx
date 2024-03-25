@@ -1,23 +1,22 @@
 import Todo from '../Todo/Todo';
 import Form from '../Form/Form';
-import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import todoReducer from '../../reducers/todo-reducer';
+import { TodoItem, TodoActionTypes } from '../../reducers/todo-reducer';
+import { useEffect, useReducer } from 'react';
 import List from '@mui/material/List';
 import { Typography } from '@mui/material';
 
-interface ListItem {
-  uuid: string;
-  name: string;
-  done: boolean;
-}
-
 const TodoList = () => {
-  const [todoList, setList] = useState<ListItem[]>([]);
+  const [todoList, dispatch] = useReducer(todoReducer, []);
 
   useEffect(() => {
     const todoList = localStorage.getItem('todoList');
+
     if (todoList) {
-      setList(JSON.parse(todoList));
+      dispatch({
+        type: TodoActionTypes.SET_TODO_LIST,
+        payload: JSON.parse(todoList),
+      });
     }
   }, []);
 
@@ -25,42 +24,39 @@ const TodoList = () => {
     localStorage.setItem('todoList', JSON.stringify(todoList));
   }, [todoList]);
 
-  const handleTodoAdding = (item: string) => {
-    if (item === '') return;
-    setList([
-      ...todoList,
-      {
-        uuid: uuidv4(),
-        name: item,
-        done: false,
-      },
-    ]);
+  const addTodo = (name: string) => {
+    if (name === '') return;
+    dispatch({
+      type: TodoActionTypes.ADD_TODO,
+      payload: name,
+    });
   };
 
-  const handleTodoDeleting = (uuid: string) => {
-    setList(todoList.filter((item) => item.uuid !== uuid));
+  const updateTodo = (uuid: string, key: string, value?: string | boolean) => {
+    dispatch({
+      type: TodoActionTypes.UPDATE_TODO,
+      payload: { uuid, key, value },
+    });
   };
 
-  const handleTodoEditing = (uuid: string, name: string) => {
-    setList(todoList.map((item) => (item.uuid === uuid ? { ...item, name } : item)));
-  };
-
-  const handleTodoDone = (uuid: string) => {
-    setList(todoList.map((item) => (item.uuid === uuid ? { ...item, done: !item.done } : item)));
+  const deleteTodo = (uuid: string) => {
+    dispatch({
+      type: TodoActionTypes.DELETE_TODO,
+      payload: uuid,
+    });
   };
 
   return (
     <div>
-      <Form addTodo={handleTodoAdding} />
+      <Form addTodo={addTodo} />
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {todoList.length === 0 ? (
           <Typography variant="h5">No todos yet</Typography>
         ) : (
-          todoList.map((item) => (
+          todoList.map((item: TodoItem) => (
             <Todo
-              editCallback={handleTodoEditing}
-              deleteCallback={handleTodoDeleting}
-              doneCallback={handleTodoDone}
+              updateCallback={updateTodo}
+              deleteCallback={deleteTodo}
               done={item.done}
               uuid={item.uuid}
               key={item.uuid}
