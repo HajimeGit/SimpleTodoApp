@@ -1,22 +1,25 @@
 import Todo from '../Todo/Todo';
 import Form from '../Form/Form';
-import todoReducer from '../../reducers/todo-reducer';
-import { TodoItem, TodoActionTypes } from '../../reducers/todo-reducer';
-import { useEffect, useReducer } from 'react';
-import List from '@mui/material/List';
-import { Typography } from '@mui/material';
+import { TodoItem, TodoActionTypes, todoReducer } from '../../reducers/todo-reducer';
+import React, { useEffect, useReducer } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { LoadingSpinner } from '@/components/ui/spinner.tsx';
 
 const TodoList = () => {
   const [todoList, dispatch] = useReducer(todoReducer, []);
+  const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
     const todoList = localStorage.getItem('todoList');
 
     if (todoList) {
-      dispatch({
-        type: TodoActionTypes.SET_TODO_LIST,
-        payload: JSON.parse(todoList),
-      });
+      setTimeout(() => {
+        dispatch({
+          type: TodoActionTypes.SET_TODO_LIST,
+          payload: JSON.parse(todoList),
+        });
+        setLoading(false);
+      }, 500);
     }
   }, []);
 
@@ -46,25 +49,38 @@ const TodoList = () => {
     });
   };
 
+  if (loading) return <LoadingSpinner />;
+
   return (
-    <div>
+    <div className="flex flex-col gap-10 min-w-20">
       <Form addTodo={addTodo} />
-      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        {todoList.length === 0 ? (
-          <Typography variant="h5">No todos yet</Typography>
-        ) : (
-          todoList.map((item: TodoItem) => (
-            <Todo
-              updateCallback={updateTodo}
-              deleteCallback={deleteTodo}
-              done={item.done}
-              uuid={item.uuid}
-              key={item.uuid}
-              name={item.name}
-            />
-          ))
-        )}
-      </List>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Done</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {todoList.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={3}>No todos yet</TableCell>
+            </TableRow>
+          ) : (
+            todoList.map((item: TodoItem) => (
+              <Todo
+                updateCallback={updateTodo}
+                deleteCallback={deleteTodo}
+                done={item.done}
+                uuid={item.uuid}
+                key={item.uuid}
+                name={item.name}
+              />
+            ))
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 };

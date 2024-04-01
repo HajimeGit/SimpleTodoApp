@@ -20,7 +20,7 @@ export interface TodoItem {
   done: boolean;
 }
 
-export default function todoReducer(state: TodoState, action: TodoAction) {
+export function todoReducer(state: TodoState, action: TodoAction) {
   const { type, payload } = action;
   switch (type) {
     case TodoActionTypes.ADD_TODO:
