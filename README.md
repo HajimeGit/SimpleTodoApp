@@ -13,7 +13,7 @@ A simple todo app built with React and TypeScript. This project is a part of my 
 ## How to use
 1. Clone the repo
 ``` bash
-git clone https://your-repo-url.git
+git clone https://github.com/HajimeGit/SimpleTodoApp.git
 ```
 
 2. Install dependencies
